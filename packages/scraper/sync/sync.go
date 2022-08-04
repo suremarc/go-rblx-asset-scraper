@@ -100,7 +100,7 @@ func Main(in Request) (*Response, error) {
 
 					resp, err := http.DefaultClient.Do(req)
 					if err != nil {
-						logger.WithError(err).Error("failed to get batch, skipping")
+						logger.WithError(err).Error("failed to get asset, skipping")
 						continue
 					}
 
@@ -109,7 +109,7 @@ func Main(in Request) (*Response, error) {
 					go func() {
 						gz.Reset(pw)
 						if _, err := io.Copy(gz, resp.Body); err != nil {
-							logger.WithError(err).Error("couldn't stream response body: %w", err)
+							logger.WithError(err).Error("couldn't stream response body")
 							pw.CloseWithError(err)
 						}
 						gz.Close()
@@ -122,7 +122,8 @@ func Main(in Request) (*Response, error) {
 						Body:   pr,
 					})
 					if err != nil {
-						return err
+						logger.WithError(err).Error("couldn't upload to s3")
+						continue
 					}
 				}
 
