@@ -9,12 +9,13 @@ import (
 	"os"
 	"time"
 
+	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/sirupsen/logrus"
-	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/time/rate"
 )
@@ -53,13 +54,8 @@ type Response struct {
 	Body       string            `json:"body,omitempty"`
 }
 
-type assetWithRetries struct {
-	assetdelivery.AssetDescription
-	retries int
-}
-
 func Main(in Request) (*Response, error) {
-	items := make(chan assetWithRetries, 10_000)
+	items := make(chan assetdelivery.AssetDescription, 10_000)
 	eg, eCtx := errgroup.WithContext(context.Background())
 
 	var grps groups
@@ -101,7 +97,7 @@ func Main(in Request) (*Response, error) {
 					req = req.WithContext(eCtx)
 					resp, err := http.DefaultClient.Do(req)
 					if err != nil {
-						handleRetryFailure(eCtx, logger, items, item, err)
+						logger.WithError(err).Error("failed to get batch, skipping")
 						continue
 					}
 
@@ -123,10 +119,11 @@ func Main(in Request) (*Response, error) {
 					s3Req.SetContext(eCtx)
 
 					if err := s3Req.Send(); err != nil {
-						handleRetryFailure(eCtx, logger, items, item, err)
+						logger.WithError(err).Error("failed to send to s3, skipping")
 						continue
 					}
 				}
+
 			}
 		})
 	}
@@ -140,23 +137,7 @@ func Main(in Request) (*Response, error) {
 	}, nil
 }
 
-func handleRetryFailure(ctx context.Context, logger logrus.FieldLogger, items chan<- assetWithRetries, item assetWithRetries, err error) {
-	if item.retries > 3 {
-		logger.WithError(err).Error("retry limit exceeded, skipping")
-	} else {
-		item.retries++
-		// do this to avoid deadlocking
-		select {
-		case items <- item:
-		default:
-			logger.WithError(err).Error("input queue is full, dropping")
-		}
-	}
-
-	return
-}
-
-func indexLoop(ctx context.Context, grps groups, items chan<- assetWithRetries) error {
+func indexLoop(ctx context.Context, grps groups, items chan<- assetdelivery.AssetDescription) error {
 	defer close(items)
 
 	eg, eCtx := errgroup.WithContext(ctx)
@@ -185,7 +166,7 @@ func indexLoop(ctx context.Context, grps groups, items chan<- assetWithRetries) 
 				select {
 				case <-ctx.Done():
 					return ctx.Err()
-				case items <- assetWithRetries{AssetDescription: item}:
+				case items <- item:
 				}
 			}
 			return nil
