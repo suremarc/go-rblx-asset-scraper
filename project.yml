@@ -10,6 +10,10 @@ packages:
     parameters: {}
     actions:
       - name: sync
+        limits:
+          concurrency: 4
+          memory: 1024
+          timeout: 30000
         main: ''
         runtime: 'go:default'
         environment: {}

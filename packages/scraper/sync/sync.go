@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
@@ -68,7 +69,6 @@ func Main(in Request) (*Response, error) {
 		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 			return aws.Endpoint{
 				URL: fmt.Sprintf("https://%s.digitaloceanspaces.com:443", region),
-				// HostnameImmutable: true,
 			}, nil
 		}),
 		Region: region,
@@ -78,7 +78,7 @@ func Main(in Request) (*Response, error) {
 
 	eg.Go(func() error { return indexLoop(eCtx, grps, items) })
 	if in.Workers == 0 {
-		in.Workers = 16
+		in.Workers = runtime.GOMAXPROCS(0)
 	}
 
 	for i := 0; i < in.Workers; i++ {
