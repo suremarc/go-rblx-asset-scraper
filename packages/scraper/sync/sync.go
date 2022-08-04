@@ -131,6 +131,10 @@ func Main(in Request) (*Response, error) {
 		})
 	}
 
+	if err := eg.Wait(); err != nil {
+		return nil, err
+	}
+
 	return &Response{
 		StatusCode: http.StatusOK,
 	}, nil
