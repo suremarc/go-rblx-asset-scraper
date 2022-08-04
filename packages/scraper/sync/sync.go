@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"runtime"
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
@@ -45,8 +44,8 @@ func init() {
 }
 
 type Request struct {
-	Groups  string `json:"groups"`
-	Workers int    `json:"workers,omitempty"`
+	Groups      string `json:"groups"`
+	Concurrency int    `json:"concurrency,omitempty"`
 }
 
 type Response struct {
@@ -77,11 +76,11 @@ func Main(in Request) (*Response, error) {
 	uploader := manager.NewUploader(client)
 
 	eg.Go(func() error { return indexLoop(eCtx, grps, items) })
-	if in.Workers == 0 {
-		in.Workers = runtime.GOMAXPROCS(0)
+	if in.Concurrency == 0 {
+		in.Concurrency = 8
 	}
 
-	for i := 0; i < in.Workers; i++ {
+	for i := 0; i < in.Concurrency; i++ {
 		eg.Go(func() error {
 			gz := gzip.NewWriter(nil)
 			for {
@@ -106,12 +105,13 @@ func Main(in Request) (*Response, error) {
 					}
 
 					pr, pw := io.Pipe()
+					defer pr.Close()
 					go func() {
 						gz.Reset(pw)
 						if _, err := io.Copy(gz, resp.Body); err != nil {
 							pw.CloseWithError(err)
 						}
-						gz.Flush()
+						gz.Close()
 						pw.Close()
 					}()
 
