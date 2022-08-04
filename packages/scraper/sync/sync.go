@@ -65,8 +65,12 @@ func Main(in Request) (*Response, error) {
 
 	client := s3.NewFromConfig(aws.Config{
 		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
-		// Endpoint:    fmt.Sprintf("%s.digitaloceanspaces.com:443", region),
-		// EndpointResolver: ,
+		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+			return aws.Endpoint{
+				URL:               fmt.Sprintf("%s.digitaloceanspaces.com:443", region),
+				HostnameImmutable: true,
+			}, nil
+		}),
 		Region: region,
 	})
 
