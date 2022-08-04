@@ -87,7 +87,11 @@ func Main(in Request) (*Response, error) {
 				select {
 				case <-eCtx.Done():
 					return eCtx.Err()
-				case item := <-items:
+				case item, ok := <-items:
+					if !ok {
+						return nil
+					}
+
 					logger := logrus.WithField("item", item)
 					req, err := http.NewRequest(http.MethodGet, item.Locations[0].Location, nil)
 					if err != nil {
