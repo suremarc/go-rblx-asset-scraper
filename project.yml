@@ -1,0 +1,17 @@
+parameters: {}
+environment:
+  SPACES_KEY: ${SPACES_KEY}
+  SPACES_SECRET: ${SPACES_SECRET}
+  BUCKET: ${BUCKET}
+  REGION: ${REGION}
+packages:
+  - name: sample
+    environment: {}
+    parameters: {}
+    actions:
+      - name: hello
+        main: ''
+        runtime: 'go:default'
+        environment: {}
+        parameters: {}
+
