@@ -11,10 +11,10 @@ import (
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/time/rate"
@@ -63,13 +63,14 @@ func Main(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	config := &aws.Config{
-		Credentials: credentials.NewStaticCredentials(key, secret, ""),
-		Endpoint:    aws.String(fmt.Sprintf("%s.digitaloceanspaces.com:443", region)),
-		Region:      aws.String(region),
-	}
-	sess := session.New(config)
-	s3Client := s3.New(sess)
+	client := s3.NewFromConfig(aws.Config{
+		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
+		// Endpoint:    fmt.Sprintf("%s.digitaloceanspaces.com:443", region),
+		// EndpointResolver: ,
+		Region: region,
+	})
+
+	uploader := manager.NewUploader(client)
 
 	eg.Go(func() error { return indexLoop(eCtx, grps, items) })
 	if in.Workers == 0 {
@@ -89,12 +90,11 @@ func Main(in Request) (*Response, error) {
 					}
 
 					logger := logrus.WithField("item", item)
-					req, err := http.NewRequest(http.MethodGet, item.Locations[0].Location, nil)
+					req, err := http.NewRequestWithContext(eCtx, http.MethodGet, item.Locations[0].Location, nil)
 					if err != nil {
 						return fmt.Errorf("error creating request: %w", err)
 					}
 
-					req = req.WithContext(eCtx)
 					resp, err := http.DefaultClient.Do(req)
 					if err != nil {
 						logger.WithError(err).Error("failed to get batch, skipping")
@@ -111,16 +111,25 @@ func Main(in Request) (*Response, error) {
 						pw.Close()
 					}()
 
-					s3Req, _ := s3Client.PutObjectRequest(&s3.PutObjectInput{
+					// s3Req, _ := s3Client.PutObjectRequest(&s3.PutObjectInput{
+					// 	Bucket: aws.String(bucket),
+					// 	Key:    aws.String(item.Etag() + ".gz"),
+					// })
+					// s3Req.SetStreamingBody(pr)
+					// s3Req.SetContext(eCtx)
+
+					// if err := s3Req.Send(); err != nil {
+					// 	logger.WithError(err).Error("failed to send to s3, skipping")
+					// 	continue
+					// }
+
+					_, err = uploader.Upload(eCtx, &s3.PutObjectInput{
 						Bucket: aws.String(bucket),
 						Key:    aws.String(item.Etag() + ".gz"),
+						Body:   pr,
 					})
-					s3Req.SetStreamingBody(pr)
-					s3Req.SetContext(eCtx)
-
-					if err := s3Req.Send(); err != nil {
-						logger.WithError(err).Error("failed to send to s3, skipping")
-						continue
+					if err != nil {
+						return err
 					}
 				}
 
