@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
+	"go.uber.org/atomic"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -49,9 +50,10 @@ type Request struct {
 }
 
 type Response struct {
-	StatusCode int               `json:"statusCode,omitempty"`
-	Headers    map[string]string `json:"headers,omitempty"`
-	Body       string            `json:"body,omitempty"`
+	StatusCode int `json:"statusCode,omitempty"`
+	Successes  int `json:"successes"`
+	Failures   int `json:"failures"`
+	Total      int `json:"total"`
 }
 
 func Main(in Request) (*Response, error) {
@@ -80,6 +82,9 @@ func Main(in Request) (*Response, error) {
 		in.Concurrency = 8
 	}
 
+	var numItems atomic.Int64
+	var numSuccess atomic.Int64
+
 	for i := 0; i < in.Concurrency; i++ {
 		eg.Go(func() error {
 			gz := gzip.NewWriter(nil)
@@ -91,6 +96,7 @@ func Main(in Request) (*Response, error) {
 					if !ok {
 						return nil
 					}
+					numItems.Inc()
 
 					logger := logrus.WithField("item", item)
 					req, err := http.NewRequestWithContext(eCtx, http.MethodGet, item.Locations[0].Location, nil)
@@ -125,6 +131,8 @@ func Main(in Request) (*Response, error) {
 						logger.WithError(err).Error("couldn't upload to s3")
 						continue
 					}
+
+					numSuccess.Inc()
 				}
 
 			}
@@ -137,6 +145,9 @@ func Main(in Request) (*Response, error) {
 
 	return &Response{
 		StatusCode: http.StatusOK,
+		Successes:  int(numSuccess.Load()),
+		Failures:   int(numItems.Load() - numSuccess.Load()),
+		Total:      int(numItems.Load()),
 	}, nil
 }
 
