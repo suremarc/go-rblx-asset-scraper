@@ -67,8 +67,8 @@ func Main(in Request) (*Response, error) {
 		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
 		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 			return aws.Endpoint{
-				URL:               fmt.Sprintf("%s.digitaloceanspaces.com:443", region),
-				HostnameImmutable: true,
+				URL: fmt.Sprintf("%s.digitaloceanspaces.com:443", region),
+				// HostnameImmutable: true,
 			}, nil
 		}),
 		Region: region,
@@ -114,18 +114,6 @@ func Main(in Request) (*Response, error) {
 						gz.Flush()
 						pw.Close()
 					}()
-
-					// s3Req, _ := s3Client.PutObjectRequest(&s3.PutObjectInput{
-					// 	Bucket: aws.String(bucket),
-					// 	Key:    aws.String(item.Etag() + ".gz"),
-					// })
-					// s3Req.SetStreamingBody(pr)
-					// s3Req.SetContext(eCtx)
-
-					// if err := s3Req.Send(); err != nil {
-					// 	logger.WithError(err).Error("failed to send to s3, skipping")
-					// 	continue
-					// }
 
 					_, err = uploader.Upload(eCtx, &s3.PutObjectInput{
 						Bucket: aws.String(bucket),
