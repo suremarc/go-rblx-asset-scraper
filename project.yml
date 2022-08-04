@@ -2,14 +2,14 @@ parameters: {}
 environment:
   SPACES_KEY: ${SPACES_KEY}
   SPACES_SECRET: ${SPACES_SECRET}
-  BUCKET: ${BUCKET}
-  REGION: ${REGION}
+  BUCKET: ${SPACES_BUCKET}
+  REGION: ${SPACES_REGION}
 packages:
-  - name: sample
+  - name: scraper
     environment: {}
     parameters: {}
     actions:
-      - name: hello
+      - name: sync
         main: ''
         runtime: 'go:default'
         environment: {}

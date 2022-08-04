@@ -14,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/sirupsen/logrus"
-	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery/sync/assetdelivery"
+	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/time/rate"
 )
@@ -32,11 +32,11 @@ func init() {
 	if secret == "" {
 		panic("no secret provided")
 	}
-	bucket = os.Getenv("BUCKET")
+	bucket = os.Getenv("SPACES_BUCKET")
 	if bucket == "" {
 		panic("no bucket provided")
 	}
-	region = os.Getenv("REGION")
+	region = os.Getenv("SPACES_REGION")
 	if region == "" {
 		panic("no region provided")
 	}
