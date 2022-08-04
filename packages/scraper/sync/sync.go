@@ -109,6 +109,7 @@ func Main(in Request) (*Response, error) {
 					go func() {
 						gz.Reset(pw)
 						if _, err := io.Copy(gz, resp.Body); err != nil {
+							logger.WithError(err).Error("couldn't stream response body: %w", err)
 							pw.CloseWithError(err)
 						}
 						gz.Close()
