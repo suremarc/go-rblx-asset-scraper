@@ -67,7 +67,7 @@ func Main(in Request) (*Response, error) {
 		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
 		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 			return aws.Endpoint{
-				URL: fmt.Sprintf("%s.digitaloceanspaces.com:443", region),
+				URL: fmt.Sprintf("https://%s.digitaloceanspaces.com:443", region),
 				// HostnameImmutable: true,
 			}, nil
 		}),
