@@ -9,7 +9,8 @@ import (
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
-	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/groups"
+	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/client"
+	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
 	"go.uber.org/atomic"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -25,24 +26,11 @@ var (
 	key, secret, bucket, region string
 )
 
-type Request struct {
-	Groups      groups.Groups `json:"groups"`
-	Concurrency int           `json:"concurrency,omitempty"`
-}
-
-type Response struct {
-	StatusCode           int `json:"statusCode,omitempty"`
-	Successes            int `json:"successes"`
-	Failures             int `json:"failures"`
-	Total                int `json:"total"`
-	DurationMilliseconds int `json:"duration_ms"`
-}
-
-func Main(in Request) (*Response, error) {
+func Main(in client.Request) (*client.Response, error) {
 	items := make(chan assetdelivery.AssetDescription, 10_000)
 	eg, eCtx := errgroup.WithContext(context.Background())
 
-	client := s3.NewFromConfig(aws.Config{
+	s3Client := s3.NewFromConfig(aws.Config{
 		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
 		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 			return aws.Endpoint{
@@ -52,9 +40,9 @@ func Main(in Request) (*Response, error) {
 		Region: region,
 	})
 
-	uploader := manager.NewUploader(client)
+	uploader := manager.NewUploader(s3Client)
 
-	eg.Go(func() error { return indexLoop(eCtx, in.Groups, items) })
+	eg.Go(func() error { return indexLoop(eCtx, in.Ranges, items) })
 	if in.Concurrency == 0 {
 		in.Concurrency = 8
 	}
@@ -121,7 +109,7 @@ func Main(in Request) (*Response, error) {
 		return nil, err
 	}
 
-	return &Response{
+	return &client.Response{
 		StatusCode:           http.StatusOK,
 		Successes:            int(numSuccess.Load()),
 		Failures:             int(numItems.Load() - numSuccess.Load()),
@@ -130,7 +118,7 @@ func Main(in Request) (*Response, error) {
 	}, nil
 }
 
-func indexLoop(ctx context.Context, grps groups.Groups, items chan<- assetdelivery.AssetDescription) error {
+func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription) error {
 	defer close(items)
 
 	eg, eCtx := errgroup.WithContext(ctx)
@@ -139,7 +127,7 @@ func indexLoop(ctx context.Context, grps groups.Groups, items chan<- assetdelive
 	limiter := rate.NewLimiter(rate.Every(time.Second/100), 100)
 
 	for {
-		ids := grps.Pop(256).AsIntSlice()
+		ids := rngs.Pop(256).AsIntSlice()
 		if len(ids) == 0 {
 			break
 		}
