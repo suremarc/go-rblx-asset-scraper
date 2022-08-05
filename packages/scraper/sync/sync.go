@@ -12,13 +12,13 @@ import (
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/client"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
-	"go.uber.org/atomic"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/sirupsen/logrus"
+	"go.uber.org/atomic"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/time/rate"
 )
