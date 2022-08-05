@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	store, err := NewSQL("events.db")
+	store, err := NewSQL("postgresql://localhost?sslmode=disable&user=postgres&password=postgres")
 	if err != nil {
 		logrus.WithError(err).Fatal("create store")
 	}

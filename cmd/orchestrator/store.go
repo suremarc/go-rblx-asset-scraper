@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/client"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
-	_ "modernc.org/sqlite"
+
+	_ "github.com/lib/pq"
 )
 
 type SQL struct {
@@ -20,12 +22,12 @@ const (
 	createTableStmt = `
 CREATE TABLE IF NOT EXISTS events (
 	range varchar(32),
-	status_code int,
-	successes int,
-	failures int,
-	total int,
-	duration_ms int,
-	last_attempt_utc int,
+	status_code DOUBLE,
+	successes DOUBLE,
+	failures DOUBLE,
+	total DOUBLE,
+	duration_ms DOUBLE,
+	last_attempt_utc DOUBLE,
 	PRIMARY KEY(range)
 );
 
@@ -36,12 +38,21 @@ PRAGMA journal_mode=WAL`
 )
 
 func NewSQL(address string) (*SQL, error) {
-	db, err := sql.Open("sqlite", address)
+	db, err := sql.Open("postgres", address)
 	if err != nil {
 		return nil, err
 	}
 
 	if _, err := db.Exec(createTableStmt); err != nil {
+		// try replacing the double type
+		_, err = db.Exec(strings.ReplaceAll(createTableStmt, "DOUBLE", "DOUBLE PRECISION"))
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err != nil {
 		return nil, err
 	}
 
