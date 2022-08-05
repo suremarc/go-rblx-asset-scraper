@@ -4,7 +4,6 @@ environment:
   SPACES_SECRET: ${SPACES_SECRET}
   SPACES_BUCKET: ${SPACES_BUCKET}
   SPACES_REGION: ${SPACES_REGION}
-  LOG_LEVEL: TRACE
 packages:
   - name: scraper
     environment: {}

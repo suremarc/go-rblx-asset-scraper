@@ -16,6 +16,7 @@ env:
   SPACES_SECRET: ${{ secrets.SPACES_SECRET }}
   SPACES_BUCKET: assets-test
   SPACES_REGION: nyc3
+  LOG_LEVEL: trace
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
