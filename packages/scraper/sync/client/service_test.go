@@ -4,6 +4,7 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"testing"
 
@@ -22,4 +23,8 @@ func TestClient(t *testing.T) {
 	resp, err := c.Sync(context.TODO(), Request{Ranges: ranges.Ranges{rng}})
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	buf, err := json.MarshalIndent(resp, "\t", "")
+	require.NoError(t, err)
+	t.Log(string(buf))
 }

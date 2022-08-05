@@ -3,8 +3,10 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
 )
@@ -34,8 +36,8 @@ func (c *Client) Sync(ctx context.Context, req Request) (*Response, error) {
 		return nil, fmt.Errorf("couldn't send sync request: %w", err)
 	}
 
-	cmd := exec.Command("doctl", "serverless fn invoke scraper/sync",
-		fmt.Sprintf("-p ranges:%s", rngsText))
+	cmd := exec.Command("doctl", strings.Split("serverless fn invoke scraper/sync", " ")...)
+	cmd.Args = append(cmd.Args, fmt.Sprintf("-p ranges:%s", rngsText))
 	if req.Concurrency > 0 {
 		cmd.Args = append(cmd.Args, fmt.Sprintf("-p concurrency:%d", req.Concurrency))
 	}
@@ -44,6 +46,11 @@ func (c *Client) Sync(ctx context.Context, req Request) (*Response, error) {
 
 	out, err := cmd.Output()
 	if err != nil {
+		var exitError *exec.ExitError
+		if errors.As(err, &exitError) {
+			return nil, fmt.Errorf("%w\n%s", err, fmt.Errorf(string(exitError.Stderr)))
+		}
+
 		return nil, err
 	}
 
