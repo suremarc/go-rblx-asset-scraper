@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
@@ -25,25 +24,6 @@ import (
 var (
 	key, secret, bucket, region string
 )
-
-func init() {
-	key = os.Getenv("SPACES_KEY")
-	if key == "" {
-		panic("no key provided")
-	}
-	secret = os.Getenv("SPACES_SECRET")
-	if secret == "" {
-		panic("no secret provided")
-	}
-	bucket = os.Getenv("SPACES_BUCKET")
-	if bucket == "" {
-		panic("no bucket provided")
-	}
-	region = os.Getenv("SPACES_REGION")
-	if region == "" {
-		panic("no region provided")
-	}
-}
 
 type Request struct {
 	Groups      groups.Groups `json:"groups"`
