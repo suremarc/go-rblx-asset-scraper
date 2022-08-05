@@ -17,7 +17,7 @@ type Request struct {
 }
 
 type Response struct {
-	StatusCode           int `json:"status_code,omitempty"`
+	StatusCode           int `json:"status_code"`
 	Successes            int `json:"successes"`
 	Failures             int `json:"failures"`
 	Total                int `json:"total"`
@@ -51,6 +51,7 @@ func (c *Client) Sync(ctx context.Context, req Request) (*Response, error) {
 
 		return nil, err
 	}
+	fmt.Println(string(out))
 
 	var resp Response
 	if err := json.Unmarshal(out, &resp); err != nil {
