@@ -31,12 +31,15 @@ func main() {
 		logrus.WithError(err).Fatal("parse arg")
 	}
 
+	logrus.WithField("range", rngsStr).Info("starting job")
+
 	eg, eCtx := errgroup.WithContext(context.Background())
 	var mu sync.Mutex
 
 	limiter := rate.NewLimiter(rate.Every(time.Minute/600), 120)
 
 	for i := 0; i < 120; i++ {
+		i := i
 		eg.Go(func() error {
 			for {
 				select {
@@ -48,13 +51,16 @@ func main() {
 					}
 
 					mu.Lock()
-					subRng, more := pop(rng, 1000)
+					subRng, more := pop(&rng, 1000)
 					mu.Unlock()
 					if !more {
 						return nil
 					}
 
-					logger := logrus.WithField("range", subRng)
+					logger := logrus.WithFields(logrus.Fields{
+						"range": subRng,
+						"index": i,
+					})
 
 					status, err := store.Query(eCtx, subRng)
 					if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -81,9 +87,13 @@ func main() {
 			}
 		})
 	}
+
+	if err := eg.Wait(); err != nil {
+		logrus.WithError(err).Fatal("run job")
+	}
 }
 
-func pop(rng ranges.Range, n int) (ranges.Range, bool) {
+func pop(rng *ranges.Range, n int) (ranges.Range, bool) {
 	if rng.Len() == 0 {
 		return ranges.Range{}, false
 	}

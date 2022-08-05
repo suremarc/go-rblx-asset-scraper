@@ -12,7 +12,7 @@ import (
 
 type SQL struct {
 	db     *sql.DB
-	insert *sql.Stmt
+	upsert *sql.Stmt
 	query  *sql.Stmt
 }
 
@@ -26,11 +26,13 @@ CREATE TABLE IF NOT EXISTS events (
 	total int,
 	duration_ms int,
 	last_attempt_utc int,
-	PRIMARY KEY(group)
-);`
+	PRIMARY KEY(range)
+);
 
-	insertStmt = `INSERT INTO events VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	queryStmt  = `SELECT status_code FROM events WHERE group=$1`
+PRAGMA journal_mode=WAL`
+
+	upsertStmt = `INSERT INTO events VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (range) DO UPDATE SET status_code=$2, successes=$3, failures=$4, total=$5, duration_ms=$6, last_attempt_utc=$7`
+	queryStmt  = `SELECT status_code FROM events WHERE range=$1`
 )
 
 func NewSQL(address string) (*SQL, error) {
@@ -47,7 +49,7 @@ func NewSQL(address string) (*SQL, error) {
 		db: db,
 	}
 
-	if s.insert, err = db.Prepare(insertStmt); err != nil {
+	if s.upsert, err = db.Prepare(upsertStmt); err != nil {
 		return nil, err
 	}
 
@@ -64,7 +66,7 @@ func (s *SQL) Log(ctx context.Context, rng ranges.Range, resp *client.Response) 
 		return err
 	}
 
-	if _, err := s.insert.ExecContext(
+	if _, err := s.upsert.ExecContext(
 		ctx,
 		txt,
 		resp.StatusCode,
