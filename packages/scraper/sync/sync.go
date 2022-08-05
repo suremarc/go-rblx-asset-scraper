@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
+	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/groups"
 	"go.uber.org/atomic"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -45,8 +46,8 @@ func init() {
 }
 
 type Request struct {
-	Groups      string `json:"groups"`
-	Concurrency int    `json:"concurrency,omitempty"`
+	Groups      groups.Groups `json:"groups"`
+	Concurrency int           `json:"concurrency,omitempty"`
 }
 
 type Response struct {
@@ -60,11 +61,6 @@ func Main(in Request) (*Response, error) {
 	items := make(chan assetdelivery.AssetDescription, 10_000)
 	eg, eCtx := errgroup.WithContext(context.Background())
 
-	var grps groups
-	if err := grps.parse(in.Groups); err != nil {
-		return nil, err
-	}
-
 	client := s3.NewFromConfig(aws.Config{
 		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
 		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
@@ -77,7 +73,7 @@ func Main(in Request) (*Response, error) {
 
 	uploader := manager.NewUploader(client)
 
-	eg.Go(func() error { return indexLoop(eCtx, grps, items) })
+	eg.Go(func() error { return indexLoop(eCtx, in.Groups, items) })
 	if in.Concurrency == 0 {
 		in.Concurrency = 8
 	}
@@ -151,7 +147,7 @@ func Main(in Request) (*Response, error) {
 	}, nil
 }
 
-func indexLoop(ctx context.Context, grps groups, items chan<- assetdelivery.AssetDescription) error {
+func indexLoop(ctx context.Context, grps groups.Groups, items chan<- assetdelivery.AssetDescription) error {
 	defer close(items)
 
 	eg, eCtx := errgroup.WithContext(ctx)
@@ -160,7 +156,7 @@ func indexLoop(ctx context.Context, grps groups, items chan<- assetdelivery.Asse
 	limiter := rate.NewLimiter(rate.Every(time.Second/100), 100)
 
 	for {
-		ids := grps.pop(256).asIntSlice()
+		ids := grps.Pop(256).AsIntSlice()
 		if len(ids) == 0 {
 			break
 		}
