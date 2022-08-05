@@ -7,11 +7,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/client"
-	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
 	"go.uber.org/atomic"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -35,6 +35,10 @@ func Main(in client.Request) (*client.Response, error) {
 		logrus.SetLevel(l)
 	}
 
+	if in.Concurrency == 0 {
+		in.Concurrency = 4
+	}
+
 	items := make(chan assetdelivery.AssetDescription, 10_000)
 	eg, eCtx := errgroup.WithContext(context.Background())
 
@@ -50,10 +54,7 @@ func Main(in client.Request) (*client.Response, error) {
 
 	uploader := manager.NewUploader(s3Client)
 
-	eg.Go(func() error { return indexLoop(eCtx, in.Ranges, items) })
-	if in.Concurrency == 0 {
-		in.Concurrency = 4
-	}
+	eg.Go(func() error { return indexLoop(eCtx, in, items) })
 
 	logrus.WithField("request", in).Trace("got request")
 
@@ -128,45 +129,51 @@ func Main(in client.Request) (*client.Response, error) {
 	}, nil
 }
 
-func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription) error {
+func indexLoop(ctx context.Context, in client.Request, items chan<- assetdelivery.AssetDescription) error {
 	defer close(items)
-
-	eg, eCtx := errgroup.WithContext(ctx)
 
 	client := assetdelivery.NewClient()
 	limiter := rate.NewLimiter(rate.Every(time.Second/100), 100)
 
-	for {
-		ids := rngs.Pop(256).AsIntSlice()
-		if len(ids) == 0 {
-			break
-		}
+	const maxBatchSize = 256
+	numChunks := (in.Ranges.Len()-1)/maxBatchSize + 1
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	wg.Add(int(numChunks))
 
-		if err := limiter.Wait(eCtx); err != nil {
-			return eCtx.Err()
-		}
+	for i := 0; i < in.Concurrency; i++ {
+		go func() {
+			defer wg.Done()
 
-		eg.Go(func() error {
-			resp, err := client.Batch(eCtx, ids, &assetdelivery.BatchOptions{SkipSigningScripts: true})
+			if err := limiter.Wait(ctx); err != nil {
+				return
+			}
+
+			mu.Lock()
+			ids := in.Ranges.Pop(maxBatchSize).AsIntSlice()
+			mu.Unlock()
+
+			if len(ids) == 0 {
+				return
+			}
+
+			resp, err := client.Batch(ctx, ids, &assetdelivery.BatchOptions{SkipSigningScripts: true})
 			if err != nil {
 				logrus.WithError(err).Error("skipping")
-				return nil
+				return
 			}
 
 			for _, item := range resp.DiscardErrored().FilterByAssetType(10) {
 				select {
 				case <-ctx.Done():
-					return ctx.Err()
+					return
 				case items <- item:
 				}
 			}
-			return nil
-		})
+		}()
 	}
 
-	if err := eg.Wait(); err != nil {
-		return err
-	}
+	wg.Wait()
 
 	return nil
 }
