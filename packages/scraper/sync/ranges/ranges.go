@@ -78,7 +78,7 @@ func (r Range) MarshalText() ([]byte, error) {
 		return []byte(""), nil
 	}
 
-	return []byte(fmt.Sprintf("%d-%d", r.startInclusive, r.endExclusive)), nil
+	return []byte(fmt.Sprintf("%d-%d", r.startInclusive, r.endExclusive-1)), nil
 }
 
 func (r *Range) Pop(n int) Range {
