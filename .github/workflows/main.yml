@@ -59,3 +59,8 @@ jobs:
 
       - name: Deploy
         run: doctl serverless deploy . --remote-build
+      
+      - name: Test
+        run: |
+          cd packages/scraper/sync/client
+          go test -tags=service_test -v .

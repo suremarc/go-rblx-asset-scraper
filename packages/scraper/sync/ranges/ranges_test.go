@@ -25,11 +25,11 @@ func TestRanges(t *testing.T) {
 			expected Ranges
 		}
 
-		grps := Ranges{newRangeUnsafe(1, 10), newRangeUnsafe(13, 101), newRangeUnsafe(1239, 1241)}
+		rngs := Ranges{newRangeUnsafe(1, 10), newRangeUnsafe(13, 101), newRangeUnsafe(1239, 1241)}
 
 		cases := []testCase{
 			{
-				ranges:   append(Ranges{}, grps...),
+				ranges:   append(Ranges{}, rngs...),
 				n:        50,
 				expected: Ranges{newRangeUnsafe(1239, 1241), newRangeUnsafe(55, 101)},
 			},
