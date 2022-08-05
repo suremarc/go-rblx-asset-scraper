@@ -42,8 +42,6 @@ func (c *Client) Sync(ctx context.Context, req Request) (*Response, error) {
 		cmd.Args = append(cmd.Args, fmt.Sprintf("-p concurrency:%d", req.Concurrency))
 	}
 
-	fmt.Println(cmd.String())
-
 	out, err := cmd.Output()
 	if err != nil {
 		var exitError *exec.ExitError
