@@ -155,15 +155,6 @@ func (r *Ranges) Pop(n int) Ranges {
 	return newRange
 }
 
-func (r Ranges) Len() int64 {
-	var x int64
-	for _, rng := range r {
-		x += rng.Len()
-	}
-
-	return x
-}
-
 func (r Ranges) AsIntSlice() []int64 {
 	var entries []int64
 	for i := range r {
