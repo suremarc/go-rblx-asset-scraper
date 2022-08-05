@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
@@ -27,6 +28,13 @@ var (
 )
 
 func Main(in client.Request) (*client.Response, error) {
+	l, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
+	if err != nil {
+		logrus.WithField("LOG_LEVEL", os.Getenv("LOG_LEVEL")).Warn("invalid or missing log level")
+	} else {
+		logrus.SetLevel(l)
+	}
+
 	items := make(chan assetdelivery.AssetDescription, 10_000)
 	eg, eCtx := errgroup.WithContext(context.Background())
 
@@ -46,6 +54,8 @@ func Main(in client.Request) (*client.Response, error) {
 	if in.Concurrency == 0 {
 		in.Concurrency = 8
 	}
+
+	logrus.WithField("request", in).Trace("got request")
 
 	var numItems atomic.Int64
 	var numSuccess atomic.Int64
