@@ -52,7 +52,7 @@ func Main(in client.Request) (*client.Response, error) {
 
 	eg.Go(func() error { return indexLoop(eCtx, in.Ranges, items) })
 	if in.Concurrency == 0 {
-		in.Concurrency = 8
+		in.Concurrency = 4
 	}
 
 	logrus.WithField("request", in).Trace("got request")

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -32,18 +33,28 @@ func NewClient() *Client {
 }
 
 func (c *Client) Sync(ctx context.Context, req Request) (*Response, error) {
-	rngsText, err := req.Ranges.MarshalText()
+	dst, err := os.CreateTemp("", "scraper_sync")
 	if err != nil {
-		return nil, fmt.Errorf("couldn't send sync request: %w", err)
+		return nil, fmt.Errorf("create payload file: %w", err)
+	}
+	defer os.Remove(dst.Name())
+
+	buf, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
 	}
 
-	cmd := exec.Command("doctl", strings.Split("serverless fn invoke scraper/sync", " ")...)
-	cmd.Args = append(cmd.Args, "-p", fmt.Sprintf("ranges:%s", rngsText))
-	if req.Concurrency > 0 {
-		cmd.Args = append(cmd.Args, "-p", fmt.Sprintf("concurrency:%d", req.Concurrency))
+	if _, err = dst.Write(buf); err != nil {
+		return nil, err
 	}
 
-	logrus.WithField("cmd", cmd.String()).Trace("sending cmd")
+	cmd := exec.Command("doctl",
+		strings.Split(fmt.Sprintf("serverless fn invoke scraper/sync -P %s", dst.Name()), " ")...)
+
+	logrus.WithFields(logrus.Fields{
+		"cmd":  cmd.String(),
+		"body": string(buf),
+	}).Trace("sending cmd")
 
 	out, err := cmd.Output()
 	if err != nil {
@@ -54,7 +65,7 @@ func (c *Client) Sync(ctx context.Context, req Request) (*Response, error) {
 
 		return nil, err
 	}
-	fmt.Println(string(out))
+	logrus.Trace(string(out))
 
 	var resp Response
 	if err := json.Unmarshal(out, &resp); err != nil {

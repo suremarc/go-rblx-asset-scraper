@@ -23,7 +23,10 @@ func TestClient(t *testing.T) {
 	rng, err := ranges.NewRange(100_000, 101_000)
 	require.NoError(t, err)
 
-	resp, err := c.Sync(context.TODO(), Request{Ranges: ranges.Ranges{rng}})
+	resp, err := c.Sync(context.TODO(), Request{
+		Ranges:      ranges.Ranges{rng},
+		Concurrency: 4,
+	})
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Greater(t, resp.Successes, 290) // Ideally there should be 300-305 successes.
