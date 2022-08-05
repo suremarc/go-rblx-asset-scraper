@@ -19,7 +19,7 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,11 +29,11 @@ jobs:
         with:
           go-version: 1.18
         
-      - name: Build
+      - name: Vet
         run: |
-          go build -v ./... 
+          go vet ./... 
           cd packages/scraper/sync
-          go build -v ./...
+          go vet ./...
       
       - name: Test
         run: |
@@ -41,7 +41,7 @@ jobs:
           cd packages/scraper/sync
           go test -v ./...
   deploy:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

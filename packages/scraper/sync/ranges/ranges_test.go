@@ -8,7 +8,7 @@ import (
 )
 
 func newRangeUnsafe(start, end int64) Range {
-	return Range{startInclusive: start, endExclusive: end}
+	return Range{startInclusive: start, endExclusive: end + 1}
 }
 
 func TestRanges(t *testing.T) {
