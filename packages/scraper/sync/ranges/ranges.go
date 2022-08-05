@@ -61,7 +61,7 @@ func (r *Range) UnmarshalText(text []byte) error {
 		}
 	}
 
-	if num2 < num1 {
+	if num2 <= num1 {
 		return fmt.Errorf("%w: %s", ErrInvalidRange, s)
 	}
 

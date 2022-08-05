@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
 )
 
@@ -37,10 +38,12 @@ func (c *Client) Sync(ctx context.Context, req Request) (*Response, error) {
 	}
 
 	cmd := exec.Command("doctl", strings.Split("serverless fn invoke scraper/sync", " ")...)
-	cmd.Args = append(cmd.Args, fmt.Sprintf("-p ranges:%s", rngsText))
+	cmd.Args = append(cmd.Args, "-p", fmt.Sprintf("ranges:%s", rngsText))
 	if req.Concurrency > 0 {
-		cmd.Args = append(cmd.Args, fmt.Sprintf("-p concurrency:%d", req.Concurrency))
+		cmd.Args = append(cmd.Args, "-p", fmt.Sprintf("concurrency:%d", req.Concurrency))
 	}
+
+	logrus.WithField("cmd", cmd.String()).Trace("sending cmd")
 
 	out, err := cmd.Output()
 	if err != nil {
