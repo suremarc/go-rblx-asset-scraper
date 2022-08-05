@@ -51,10 +51,11 @@ type Request struct {
 }
 
 type Response struct {
-	StatusCode int `json:"statusCode,omitempty"`
-	Successes  int `json:"successes"`
-	Failures   int `json:"failures"`
-	Total      int `json:"total"`
+	StatusCode           int `json:"statusCode,omitempty"`
+	Successes            int `json:"successes"`
+	Failures             int `json:"failures"`
+	Total                int `json:"total"`
+	DurationMilliseconds int `json:"duration_ms"`
 }
 
 func Main(in Request) (*Response, error) {
@@ -80,6 +81,7 @@ func Main(in Request) (*Response, error) {
 
 	var numItems atomic.Int64
 	var numSuccess atomic.Int64
+	t0 := time.Now()
 
 	for i := 0; i < in.Concurrency; i++ {
 		eg.Go(func() error {
@@ -140,10 +142,11 @@ func Main(in Request) (*Response, error) {
 	}
 
 	return &Response{
-		StatusCode: http.StatusOK,
-		Successes:  int(numSuccess.Load()),
-		Failures:   int(numItems.Load() - numSuccess.Load()),
-		Total:      int(numItems.Load()),
+		StatusCode:           http.StatusOK,
+		Successes:            int(numSuccess.Load()),
+		Failures:             int(numItems.Load() - numSuccess.Load()),
+		Total:                int(numItems.Load()),
+		DurationMilliseconds: int(time.Since(t0).Milliseconds()),
 	}, nil
 }
 
