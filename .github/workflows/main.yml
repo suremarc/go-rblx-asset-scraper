@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
 
 env:
-  WASABI_KEY: ${{ secrets.WASABI_ACCESS_KEY }}
-  WASABI_SECRET: ${{ secrets.WASABI_SECRET_KEY }}
+  WASABI_ACCESS_KEY: ${{ secrets.WASABI_ACCESS_KEY }}
+  WASABI_SECRET_KEY: ${{ secrets.WASABI_SECRET_KEY }}
   WASABI_BUCKET: suremarc-rblx-assets
   WASABI_REGION: us-east-1
   LOG_LEVEL: trace
