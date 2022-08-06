@@ -41,6 +41,8 @@ func NewSQL(address string) (*SQL, error) {
 		return nil, err
 	}
 
+	db.SetMaxOpenConns(100)
+
 	if _, err = db.Exec(createTableStmt); err != nil {
 		// try replacing the double type
 		_, err = db.Exec(strings.ReplaceAll(createTableStmt, "DOUBLE", "DOUBLE PRECISION"))

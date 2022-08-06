@@ -38,7 +38,7 @@ func main() {
 
 	limiter := rate.NewLimiter(rate.Every(time.Minute/600), 120)
 
-	for i := 0; i < 64; i++ {
+	for i := 0; i < 120; i++ {
 		i := i
 		eg.Go(func() error {
 			for {
