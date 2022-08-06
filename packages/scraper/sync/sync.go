@@ -42,7 +42,7 @@ func Main(in client.Request) (*client.Response, error) {
 		Credentials: credentials.NewStaticCredentialsProvider(key, secret, ""),
 		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 			return aws.Endpoint{
-				URL: fmt.Sprintf("https://%s.s3.wasabisys.com", region),
+				URL: fmt.Sprintf("https://s3.%s.wasabisys.com", region),
 			}, nil
 		}),
 		Region: region,
