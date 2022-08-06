@@ -1,6 +1,7 @@
 package assetdelivery
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"strings"
@@ -43,12 +44,15 @@ func (c *Client) Batch(ctx context.Context, ids []int64, opts *BatchOptions) (de
 		return nil, fmt.Errorf("err executing request: %w", err)
 	}
 
-	err = descriptions.UnmarshalJSON(resp.Body())
+	const byteOrderMarkAsString = string('\uFEFF')
+	body := bytes.TrimPrefix(resp.Body(), []byte(byteOrderMarkAsString))
+
+	err = descriptions.UnmarshalJSON(body)
 	if err != nil {
 		// try unmarshal the errors
 		var errors ErrorsResponse
-		if err2 := errors.UnmarshalJSON(resp.Body()); err2 != nil {
-			fmt.Println(string(resp.Body()))
+		if err2 := errors.UnmarshalJSON(body); err2 != nil {
+			fmt.Println(string(body))
 			// just return the original error
 			return nil, fmt.Errorf("error unmarshaling response body: %w", err)
 		}

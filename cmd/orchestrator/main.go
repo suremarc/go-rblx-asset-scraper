@@ -47,7 +47,7 @@ func main() {
 					return nil
 				default:
 					mu.Lock()
-					subRng, more := pop(&rng, 100_000)
+					subRng, more := pop(&rng, 2_500)
 					mu.Unlock()
 					if !more {
 						return nil
