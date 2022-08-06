@@ -4,7 +4,7 @@ environment:
   WASABI_SECRET_KEY: ${WASABI_SECRET_KEY}
   WASABI_BUCKET: ${WASABI_BUCKET}
   WASABI_REGION: ${WASABI_REGION}
-  LOG_LEVEL: info
+  LOG_LEVEL: trace
 packages:
   - name: scraper
     environment: {}
