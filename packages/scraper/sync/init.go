@@ -3,11 +3,11 @@ package main
 import "os"
 
 func init() {
-	key = os.Getenv("WASABI_KEY")
+	key = os.Getenv("WASABI_ACCESS_KEY")
 	if key == "" {
 		panic("no key provided")
 	}
-	secret = os.Getenv("WASABI_SECRET")
+	secret = os.Getenv("WASABI_SECRET_KEY")
 	if secret == "" {
 		panic("no secret provided")
 	}
