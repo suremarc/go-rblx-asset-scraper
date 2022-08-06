@@ -4,7 +4,7 @@ RUN DEBIAN_FRONTEND=noninteractive; apt update && apt install -y ca-certificates
 RUN go build -o orchestrator ./cmd/orchestrator
 
 FROM digitalocean/doctl:latest
-ENV DIGITALOCEAN_ACCESS_TOKEN=$DIGITALOCEAN_ACCESS_TOKEN
+ENV DIGITALOCEAN_ACCESS_TOKEN=$digitalocean_access_token
 RUN doctl serverless install && doctl serverless connect
 COPY --from=0 /orchestrator .
-RUN ./orchestrator
+ENTRYPOINT [ "./orchestrator" ]
