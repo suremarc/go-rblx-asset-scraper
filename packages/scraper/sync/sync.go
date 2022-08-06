@@ -116,6 +116,7 @@ func Main(in client.Request) (*client.Response, error) {
 	}
 
 	if err := eg.Wait(); err != nil {
+		logrus.WithError(err).Debug("died with error")
 		return nil, err
 	}
 
@@ -165,7 +166,6 @@ func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelive
 	}
 
 	if err := eg.Wait(); err != nil {
-		logrus.WithError(err).Debug("died with error")
 		return err
 	}
 
