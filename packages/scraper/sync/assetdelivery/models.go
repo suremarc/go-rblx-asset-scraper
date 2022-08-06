@@ -29,7 +29,8 @@ func (e Errors) Contains(code int) bool {
 
 //easyjson:json
 type ErrorsResponse struct {
-	Errors Errors `json:"errors"`
+	Errors     Errors `json:"errors"`
+	StatusCode int    `json:"status_code,omitempty"`
 }
 
 func (e ErrorsResponse) Error() string {

@@ -57,6 +57,7 @@ func (c *Client) Batch(ctx context.Context, ids []int64, opts *BatchOptions) (de
 			return nil, fmt.Errorf("error unmarshaling response body: %w", err)
 		}
 
+		errors.StatusCode = resp.StatusCode()
 		return nil, fmt.Errorf("error from server: %w", errors)
 	}
 

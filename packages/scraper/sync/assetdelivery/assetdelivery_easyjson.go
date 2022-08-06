@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(in *jlexer.Lexer, out *Locations) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery(in *jlexer.Lexer, out *Locations) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		in.Skip()
@@ -45,7 +45,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(in 
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(out *jwriter.Writer, in Locations) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery(out *jwriter.Writer, in Locations) {
 	if in == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 		out.RawString("null")
 	} else {
@@ -63,27 +63,27 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(out
 // MarshalJSON supports json.Marshaler interface
 func (v Locations) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Locations) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Locations) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Locations) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(in *jlexer.Lexer, out *Location) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery1(in *jlexer.Lexer, out *Location) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -116,7 +116,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(out *jwriter.Writer, in Location) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery1(out *jwriter.Writer, in Location) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -136,27 +136,27 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(ou
 // MarshalJSON supports json.Marshaler interface
 func (v Location) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Location) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Location) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Location) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery1(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery1(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(in *jlexer.Lexer, out *ErrorsResponse) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery2(in *jlexer.Lexer, out *ErrorsResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -177,6 +177,8 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(in
 		switch key {
 		case "errors":
 			(out.Errors).UnmarshalEasyJSON(in)
+		case "status_code":
+			out.StatusCode = int(in.Int())
 		default:
 			in.SkipRecursive()
 		}
@@ -187,7 +189,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(out *jwriter.Writer, in ErrorsResponse) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery2(out *jwriter.Writer, in ErrorsResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -196,33 +198,38 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(ou
 		out.RawString(prefix[1:])
 		(in.Errors).MarshalEasyJSON(out)
 	}
+	{
+		const prefix string = ",\"status_code\":"
+		out.RawString(prefix)
+		out.Int(int(in.StatusCode))
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
 func (v ErrorsResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ErrorsResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ErrorsResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ErrorsResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery2(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery2(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(in *jlexer.Lexer, out *Errors) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery3(in *jlexer.Lexer, out *Errors) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		in.Skip()
@@ -250,7 +257,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(out *jwriter.Writer, in Errors) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery3(out *jwriter.Writer, in Errors) {
 	if in == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 		out.RawString("null")
 	} else {
@@ -268,27 +275,27 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(ou
 // MarshalJSON supports json.Marshaler interface
 func (v Errors) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Errors) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Errors) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Errors) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery3(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery3(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(in *jlexer.Lexer, out *Error) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery4(in *jlexer.Lexer, out *Error) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -323,7 +330,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(out *jwriter.Writer, in Error) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery4(out *jwriter.Writer, in Error) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -348,27 +355,27 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(ou
 // MarshalJSON supports json.Marshaler interface
 func (v Error) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Error) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Error) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Error) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery4(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery4(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(in *jlexer.Lexer, out *AssetRequestItems) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery5(in *jlexer.Lexer, out *AssetRequestItems) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		in.Skip()
@@ -396,7 +403,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(out *jwriter.Writer, in AssetRequestItems) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery5(out *jwriter.Writer, in AssetRequestItems) {
 	if in == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 		out.RawString("null")
 	} else {
@@ -414,27 +421,27 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(ou
 // MarshalJSON supports json.Marshaler interface
 func (v AssetRequestItems) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery5(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AssetRequestItems) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery5(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AssetRequestItems) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery5(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AssetRequestItems) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery5(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery5(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(in *jlexer.Lexer, out *AssetRequestItem) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery6(in *jlexer.Lexer, out *AssetRequestItem) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -467,7 +474,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(out *jwriter.Writer, in AssetRequestItem) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery6(out *jwriter.Writer, in AssetRequestItem) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -487,27 +494,27 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(ou
 // MarshalJSON supports json.Marshaler interface
 func (v AssetRequestItem) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery6(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AssetRequestItem) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery6(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AssetRequestItem) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery6(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AssetRequestItem) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery6(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery6(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(in *jlexer.Lexer, out *AssetDescriptions) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery7(in *jlexer.Lexer, out *AssetDescriptions) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		in.Skip()
@@ -535,7 +542,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(out *jwriter.Writer, in AssetDescriptions) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery7(out *jwriter.Writer, in AssetDescriptions) {
 	if in == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 		out.RawString("null")
 	} else {
@@ -553,27 +560,27 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(ou
 // MarshalJSON supports json.Marshaler interface
 func (v AssetDescriptions) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery7(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AssetDescriptions) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery7(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AssetDescriptions) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery7(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AssetDescriptions) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery7(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery7(l, v)
 }
-func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(in *jlexer.Lexer, out *AssetDescription) {
+func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery8(in *jlexer.Lexer, out *AssetDescription) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -618,7 +625,7 @@ func easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(in
 		in.Consumed()
 	}
 }
-func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(out *jwriter.Writer, in AssetDescription) {
+func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery8(out *jwriter.Writer, in AssetDescription) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -668,23 +675,23 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(ou
 // MarshalJSON supports json.Marshaler interface
 func (v AssetDescription) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(&w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery8(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AssetDescription) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(w, v)
+	easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery8(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AssetDescription) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(&r, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery8(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AssetDescription) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetAnalyzerAssetdelivery8(l, v)
+	easyjsonB54af022DecodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyncAssetdelivery8(l, v)
 }
