@@ -90,11 +90,16 @@ func Main(in client.Request) (*client.Response, error) {
 					defer pr.Close()
 					go func() {
 						gz.Reset(pw)
+						defer gz.Reset(nil)
 						if _, err := io.Copy(gz, resp.Body); err != nil {
 							logger.WithError(err).Error("couldn't stream response body")
 							pw.CloseWithError(err)
+							return
 						}
-						gz.Close()
+						if err := gz.Close(); err != nil {
+							logger.WithError(err).Error("couldn't close/flush gzip writer")
+						}
+
 						pw.Close()
 					}()
 
