@@ -46,12 +46,8 @@ func main() {
 				case <-eCtx.Done():
 					return nil
 				default:
-					if err := limiter.Wait(eCtx); err != nil {
-						return eCtx.Err()
-					}
-
 					mu.Lock()
-					subRng, more := pop(&rng, 1000)
+					subRng, more := pop(&rng, 100_000)
 					mu.Unlock()
 					if !more {
 						return nil
@@ -71,6 +67,10 @@ func main() {
 					}
 					// either ErrNoRows (no record) or the last one failed
 
+					if err := limiter.Wait(eCtx); err != nil {
+						return eCtx.Err()
+					}
+					logger.Info("kicking off job")
 					resp, err := cl.Sync(eCtx, client.Request{
 						Ranges: ranges.Ranges{subRng},
 					})
