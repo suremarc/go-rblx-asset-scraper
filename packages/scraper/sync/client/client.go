@@ -24,7 +24,7 @@ type Response struct {
 	Failures             int    `json:"failures"`
 	Total                int    `json:"total"`
 	DurationMilliseconds int    `json:"duration_ms"`
-	Error                string `json:"error"`
+	Error                string `json:"error,omitempty"`
 }
 
 type Client struct{}
