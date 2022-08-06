@@ -12,10 +12,10 @@ on:
   workflow_dispatch:
 
 env:
-  SPACES_KEY: ${{ secrets.SPACES_KEY }}
-  SPACES_SECRET: ${{ secrets.SPACES_SECRET }}
-  SPACES_BUCKET: assets-test
-  SPACES_REGION: nyc3
+  WASABI_KEY: ${{ secrets.WASABI_KEY }}
+  WASABI_SECRET: ${{ secrets.WASABI_SECRET }}
+  WASABI_BUCKET: suremarc-rblx-assets
+  WASABI_REGION: us-east-1
   LOG_LEVEL: trace
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
