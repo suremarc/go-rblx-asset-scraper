@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	store, err := NewSQL("postgresql://localhost?sslmode=disable&user=postgres&password=postgres")
+	store, err := NewSQL(os.Getenv("POSTGRES_CONN"))
 	if err != nil {
 		logrus.WithError(err).Fatal("create store")
 	}
@@ -38,7 +38,7 @@ func main() {
 
 	limiter := rate.NewLimiter(rate.Every(time.Minute/600), 120)
 
-	for i := 0; i < 120; i++ {
+	for i := 0; i < 64; i++ {
 		i := i
 		eg.Go(func() error {
 			for {

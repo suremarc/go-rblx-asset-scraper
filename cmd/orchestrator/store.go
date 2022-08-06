@@ -28,10 +28,8 @@ CREATE TABLE IF NOT EXISTS events (
 	total DOUBLE,
 	duration_ms DOUBLE,
 	last_attempt_utc DOUBLE,
-	PRIMARY KEY(range)
-);
-
-PRAGMA journal_mode=WAL`
+	PRIMARY KEY (range)
+);`
 
 	upsertStmt = `INSERT INTO events VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (range) DO UPDATE SET status_code=$2, successes=$3, failures=$4, total=$5, duration_ms=$6, last_attempt_utc=$7`
 	queryStmt  = `SELECT status_code FROM events WHERE range=$1`
@@ -43,7 +41,7 @@ func NewSQL(address string) (*SQL, error) {
 		return nil, err
 	}
 
-	if _, err := db.Exec(createTableStmt); err != nil {
+	if _, err = db.Exec(createTableStmt); err != nil {
 		// try replacing the double type
 		_, err = db.Exec(strings.ReplaceAll(createTableStmt, "DOUBLE", "DOUBLE PRECISION"))
 	}
