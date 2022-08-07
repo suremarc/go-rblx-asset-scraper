@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
@@ -167,18 +168,22 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 		SetProxy(proxy))
 	limiter := rate.NewLimiter(rate.Every(time.Second/4), 1)
 
+	var wg sync.WaitGroup
+
 	for {
 		rng := rngs.Pop(256)
 		ids := rng.AsIntSlice()
 		if len(ids) == 0 {
 			break
 		}
+		wg.Add(1)
 
 		if err := limiter.Wait(eCtx); err != nil {
 			return eCtx.Err()
 		}
 
 		eg.Go(func() error {
+			defer wg.Done()
 			logrus.WithField("range", rng).Trace("making batch request")
 			resp, err := client.Batch(eCtx, ids, &assetdelivery.BatchOptions{SkipSigningScripts: true})
 			logrus.WithField("range", rng).Trace("got batch request")
@@ -202,11 +207,7 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 		})
 	}
 	logrus.Trace("initialized all batch fetches")
-
-	if err := eg.Wait(); err != nil {
-		return err
-	}
-	logrus.Debug("finished all batch fetches")
+	wg.Wait()
 
 	return nil
 }
