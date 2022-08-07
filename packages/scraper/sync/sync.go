@@ -201,10 +201,12 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 			return nil
 		})
 	}
+	logrus.Trace("initialized all batch fetches")
 
 	if err := eg.Wait(); err != nil {
 		return err
 	}
+	logrus.Debug("finished all batch fetches")
 
 	return nil
 }
