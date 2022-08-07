@@ -144,7 +144,7 @@ func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelive
 	client := assetdelivery.NewClient(resty.New().
 		SetRetryCount(3).
 		SetProxy(proxy))
-	limiter := rate.NewLimiter(rate.Every(time.Second/10), 1)
+	limiter := rate.NewLimiter(rate.Every(time.Second/4), 1)
 
 	for {
 		ids := rngs.Pop(256).AsIntSlice()
