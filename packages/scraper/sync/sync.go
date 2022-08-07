@@ -88,14 +88,18 @@ func Main(in client.Request) (*client.Response, error) {
 					}
 					numItems.Inc()
 
+					ctx, cancel := context.WithTimeout(eCtx, time.Second*5)
+
 					logger := logrus.WithField("item", item)
-					req, err := http.NewRequestWithContext(eCtx, http.MethodGet, item.Locations[0].Location, nil)
+					req, err := http.NewRequestWithContext(ctx, http.MethodGet, item.Locations[0].Location, nil)
 					if err != nil {
+						cancel()
 						return fmt.Errorf("error creating request: %w", err)
 					}
 
 					resp, err := downloadClient.Do(req)
 					if err != nil {
+						cancel()
 						logger.WithError(err).Error("failed to get asset, skipping")
 						continue
 					}
@@ -117,16 +121,18 @@ func Main(in client.Request) (*client.Response, error) {
 						pw.Close()
 					}()
 
-					_, err = uploader.Upload(eCtx, &s3.PutObjectInput{
+					_, err = uploader.Upload(ctx, &s3.PutObjectInput{
 						Bucket: aws.String(bucket),
 						Key:    aws.String(item.Etag() + ".gz"),
 						Body:   pr,
 					})
 					if err != nil {
+						cancel()
 						logger.WithError(err).Error("couldn't upload to s3")
 						continue
 					}
 
+					cancel()
 					numSuccess.Inc()
 				}
 
