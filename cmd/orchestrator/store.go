@@ -20,8 +20,6 @@ type SQL struct {
 
 const (
 	createTableStmt = `
-DROP TABLE IF EXISTS events;
-
 CREATE TABLE IF NOT EXISTS events (
 	range varchar(32),
 	status_code DOUBLE,
