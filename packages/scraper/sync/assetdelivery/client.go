@@ -13,10 +13,9 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient() *Client {
+func NewClient(r *resty.Client) *Client {
 	return &Client{
-		client: resty.New().
-			SetRetryCount(3),
+		client: r,
 	}
 }
 

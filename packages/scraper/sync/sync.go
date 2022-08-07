@@ -17,6 +17,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/go-resty/resty/v2"
 	"github.com/sirupsen/logrus"
 	"go.uber.org/atomic"
 	"golang.org/x/sync/errgroup"
@@ -136,11 +137,14 @@ func Main(in client.Request) (*client.Response, error) {
 
 func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription) error {
 	defer close(items)
+	proxy := os.Getenv("PROXY")
 
 	eg, eCtx := errgroup.WithContext(ctx)
 
-	client := assetdelivery.NewClient()
-	limiter := rate.NewLimiter(rate.Every(time.Second/100), 100)
+	client := assetdelivery.NewClient(resty.New().
+		SetRetryCount(3).
+		SetProxy(proxy))
+	limiter := rate.NewLimiter(rate.Every(time.Second/100), 1)
 
 	for {
 		ids := rngs.Pop(256).AsIntSlice()
