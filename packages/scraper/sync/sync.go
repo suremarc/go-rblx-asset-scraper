@@ -3,6 +3,7 @@ package main
 import (
 	"compress/gzip"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -51,7 +52,7 @@ func Main(in client.Request) (*client.Response, error) {
 
 	uploader := manager.NewUploader(s3Client)
 
-	eg.Go(func() error { return indexLoop(eCtx, in.Ranges, items) })
+	eg.Go(func() error { return indexLoop(eCtx, eg, in.Ranges, items) })
 	if in.Concurrency == 0 {
 		in.Concurrency = 4
 	}
@@ -135,11 +136,9 @@ func Main(in client.Request) (*client.Response, error) {
 	}, nil
 }
 
-func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription) error {
+func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription) error {
 	defer close(items)
 	proxy := os.Getenv("INDEXER_PROXY")
-
-	eg, eCtx := errgroup.WithContext(ctx)
 
 	client := assetdelivery.NewClient(resty.New().
 		SetRetryCount(3).
@@ -159,14 +158,18 @@ func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelive
 		eg.Go(func() error {
 			resp, err := client.Batch(eCtx, ids, &assetdelivery.BatchOptions{SkipSigningScripts: true})
 			if err != nil {
+				var rErr assetdelivery.ErrorsResponse
+				if errors.As(err, &rErr) && rErr.StatusCode == http.StatusUnauthorized {
+					return err
+				}
 				logrus.WithError(err).Error("skipping")
 				return nil
 			}
 
 			for _, item := range resp.DiscardErrored().FilterByAssetType(10) {
 				select {
-				case <-ctx.Done():
-					return ctx.Err()
+				case <-eCtx.Done():
+					return eCtx.Err()
 				case items <- item:
 				}
 			}
