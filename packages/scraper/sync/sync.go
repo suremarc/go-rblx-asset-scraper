@@ -167,6 +167,8 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 	limiter := rate.NewLimiter(rate.Every(time.Second/4), 1)
 
 	var wg sync.WaitGroup
+	var count atomic.Int64
+	var tooManyRequestsCount atomic.Int64
 
 	for {
 		rng := rngs.Pop(256)
@@ -175,6 +177,7 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 			break
 		}
 		wg.Add(1)
+		count.Inc()
 
 		if err := limiter.Wait(eCtx); err != nil {
 			return eCtx.Err()
@@ -187,8 +190,14 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 			logrus.WithField("range", rng).Trace("got batch request")
 			if err != nil {
 				var rErr assetdelivery.ErrorsResponse
-				if errors.As(err, &rErr) && rErr.StatusCode == http.StatusUnauthorized {
-					return err
+				if errors.As(err, &rErr) {
+					if rErr.StatusCode == http.StatusUnauthorized {
+						return err
+					} else if rErr.StatusCode == http.StatusTooManyRequests {
+						if tooManyRequestsCount.Inc() > count.Load()/3 {
+							return errors.New("exceeded 30% of batch requests getting 429's")
+						}
+					}
 				}
 				logrus.WithError(err).Error("skipping")
 				return nil
