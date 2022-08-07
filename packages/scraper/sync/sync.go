@@ -97,6 +97,7 @@ func Main(in client.Request) (*client.Response, error) {
 						return fmt.Errorf("error creating request: %w", err)
 					}
 
+					logger.Trace("initializing download")
 					resp, err := downloadClient.Do(req)
 					if err != nil {
 						cancel()

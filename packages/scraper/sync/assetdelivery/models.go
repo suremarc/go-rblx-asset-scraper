@@ -3,8 +3,6 @@ package assetdelivery
 import (
 	"fmt"
 	"path/filepath"
-
-	"github.com/google/uuid"
 )
 
 //easyjson:json
@@ -55,7 +53,7 @@ func AssetRequestItemsFromAssetIDs(ids ...int64) AssetRequestItems {
 	items := make(AssetRequestItems, 0, len(ids))
 	for _, id := range ids {
 		items = append(items, AssetRequestItem{
-			RequestID: uuid.NewString(),
+			RequestID: fmt.Sprint(id),
 			AssetID:   id,
 		})
 	}

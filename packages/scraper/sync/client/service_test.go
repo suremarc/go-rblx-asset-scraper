@@ -20,12 +20,12 @@ func TestClient(t *testing.T) {
 
 	c := NewClient()
 
-	rng, err := ranges.NewRange(101_000, 102_000)
+	rng, err := ranges.NewRange(101_000, 101_001)
 	require.NoError(t, err)
 
 	resp, err := c.Sync(context.TODO(), Request{
 		Ranges:      ranges.Ranges{rng},
-		Concurrency: 4,
+		Concurrency: 8,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
