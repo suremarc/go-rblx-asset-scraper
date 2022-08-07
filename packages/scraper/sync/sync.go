@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -63,6 +64,17 @@ func Main(in client.Request) (*client.Response, error) {
 	var numSuccess atomic.Int64
 	t0 := time.Now()
 
+	proxyURL, err := url.Parse(os.Getenv("INDEXER_PROXY"))
+	if err != nil {
+		return nil, errors.New("invalid proxy url")
+	}
+
+	downloadClient := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(proxyURL),
+		},
+	}
+
 	for i := 0; i < in.Concurrency; i++ {
 		eg.Go(func() error {
 			gz := gzip.NewWriter(nil)
@@ -82,7 +94,7 @@ func Main(in client.Request) (*client.Response, error) {
 						return fmt.Errorf("error creating request: %w", err)
 					}
 
-					resp, err := http.DefaultClient.Do(req)
+					resp, err := downloadClient.Do(req)
 					if err != nil {
 						logger.WithError(err).Error("failed to get asset, skipping")
 						continue
@@ -146,7 +158,8 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 	limiter := rate.NewLimiter(rate.Every(time.Second/4), 1)
 
 	for {
-		ids := rngs.Pop(256).AsIntSlice()
+		rng := rngs.Pop(256)
+		ids := rng.AsIntSlice()
 		if len(ids) == 0 {
 			break
 		}
@@ -156,9 +169,9 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 		}
 
 		eg.Go(func() error {
-			logrus.WithField("ids", ids).Trace("making batch request")
+			logrus.WithField("range", rng).Trace("making batch request")
 			resp, err := client.Batch(eCtx, ids, &assetdelivery.BatchOptions{SkipSigningScripts: true})
-			logrus.WithField("ids", ids).Trace("got batch request")
+			logrus.WithField("range", rng).Trace("got batch request")
 			if err != nil {
 				var rErr assetdelivery.ErrorsResponse
 				if errors.As(err, &rErr) && rErr.StatusCode == http.StatusUnauthorized {
