@@ -103,6 +103,7 @@ func Main(in client.Request) (*client.Response, error) {
 						logger.WithError(err).Error("failed to get asset, skipping")
 						continue
 					}
+					logger.Trace("initialized download")
 
 					pr, pw := io.Pipe()
 					defer pr.Close()
@@ -121,11 +122,13 @@ func Main(in client.Request) (*client.Response, error) {
 						pw.Close()
 					}()
 
+					logger.Trace("initializing s3 upload")
 					_, err = uploader.Upload(ctx, &s3.PutObjectInput{
 						Bucket: aws.String(bucket),
 						Key:    aws.String(item.Etag() + ".gz"),
 						Body:   pr,
 					})
+					logger.Trace("finished s3 upload")
 					if err != nil {
 						cancel()
 						logger.WithError(err).Error("couldn't upload to s3")
