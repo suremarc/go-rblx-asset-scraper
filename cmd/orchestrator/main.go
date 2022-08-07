@@ -36,7 +36,7 @@ func main() {
 	eg, eCtx := errgroup.WithContext(context.Background())
 	var mu sync.Mutex
 
-	limiter := rate.NewLimiter(rate.Every(time.Minute/360), 120)
+	limiter := rate.NewLimiter(rate.Every(time.Minute/360), 1)
 
 	for i := 0; i < 120; i++ {
 		i := i
