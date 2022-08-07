@@ -137,7 +137,7 @@ func Main(in client.Request) (*client.Response, error) {
 
 func indexLoop(ctx context.Context, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription) error {
 	defer close(items)
-	proxy := os.Getenv("PROXY")
+	proxy := os.Getenv("INDEXER_PROXY")
 
 	eg, eCtx := errgroup.WithContext(ctx)
 
