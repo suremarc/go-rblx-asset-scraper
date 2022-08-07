@@ -8,7 +8,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.21
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.2
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/google/uuid v1.3.0
 	github.com/mailru/easyjson v0.7.7
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.0

@@ -20,24 +20,33 @@ func TestRanges(t *testing.T) {
 
 	t.Run("pop", func(t *testing.T) {
 		type testCase struct {
-			ranges   Ranges
-			n        int
-			expected Ranges
+			ranges           Ranges
+			n                int
+			expectedModified Ranges
+			expectedResult   Ranges
 		}
 
 		rngs := Ranges{newRangeUnsafe(1, 10), newRangeUnsafe(13, 101), newRangeUnsafe(1239, 1241)}
 
 		cases := []testCase{
 			{
-				ranges:   append(Ranges{}, rngs...),
-				n:        50,
-				expected: Ranges{newRangeUnsafe(1239, 1241), newRangeUnsafe(55, 101)},
+				ranges:           append(Ranges{}, rngs...),
+				n:                50,
+				expectedModified: Ranges{newRangeUnsafe(1, 10), newRangeUnsafe(13, 54)},
+				expectedResult:   Ranges{newRangeUnsafe(1239, 1241), newRangeUnsafe(55, 101)},
+			},
+			{
+				ranges:           Ranges{newRangeUnsafe(1, 1000000)},
+				n:                2500,
+				expectedModified: Ranges{newRangeUnsafe(1, 997500)},
+				expectedResult:   Ranges{newRangeUnsafe(997501, 1000000)},
 			},
 		}
 
 		for _, c := range cases {
 			result := c.ranges.Pop(c.n)
-			assert.Equal(t, c.expected, result)
+			assert.Equal(t, c.ranges, c.expectedModified)
+			assert.Equal(t, c.expectedResult, result)
 		}
 	})
 }
