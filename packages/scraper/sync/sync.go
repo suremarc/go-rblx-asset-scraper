@@ -156,7 +156,9 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 		}
 
 		eg.Go(func() error {
+			logrus.WithField("ids", ids).Trace("making batch request")
 			resp, err := client.Batch(eCtx, ids, &assetdelivery.BatchOptions{SkipSigningScripts: true})
+			logrus.WithField("ids", ids).Trace("got batch request")
 			if err != nil {
 				var rErr assetdelivery.ErrorsResponse
 				if errors.As(err, &rErr) && rErr.StatusCode == http.StatusUnauthorized {
