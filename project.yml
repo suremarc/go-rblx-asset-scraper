@@ -5,7 +5,7 @@ environment:
   WASABI_BUCKET: ${WASABI_BUCKET}
   WASABI_REGION: ${WASABI_REGION}
   INDEXER_PROXY: ${INDEXER_PROXY}
-  LOG_LEVEL: trace
+  LOG_LEVEL: debug
 packages:
   - name: scraper
     environment: {}

@@ -58,7 +58,7 @@ func Main(in client.Request) (*client.Response, error) {
 		in.Concurrency = 4
 	}
 
-	logrus.WithField("request", in).Trace("got request")
+	logrus.WithField("request", in).Debug("got request")
 
 	var numItems atomic.Int64
 	var numSuccess atomic.Int64
@@ -139,7 +139,6 @@ func Main(in client.Request) (*client.Response, error) {
 					cancel()
 					numSuccess.Inc()
 				}
-
 			}
 		})
 	}
