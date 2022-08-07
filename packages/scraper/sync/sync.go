@@ -106,7 +106,6 @@ func Main(in client.Request) (*client.Response, error) {
 					logger.Trace("initialized download")
 
 					pr, pw := io.Pipe()
-					defer pr.Close()
 					go func() {
 						gz.Reset(pw)
 						defer gz.Reset(nil)
@@ -134,6 +133,7 @@ func Main(in client.Request) (*client.Response, error) {
 						logger.WithError(err).Error("couldn't upload to s3")
 						continue
 					}
+					pr.Close()
 
 					cancel()
 					numSuccess.Inc()
