@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"sync"
 	"time"
@@ -65,16 +64,16 @@ func Main(in client.Request) (*client.Response, error) {
 	var numSuccess atomic.Int64
 	t0 := time.Now()
 
-	proxyURL, err := url.Parse(os.Getenv("INDEXER_PROXY"))
-	if err != nil {
-		return nil, errors.New("invalid proxy url")
-	}
+	// proxyURL, err := url.Parse(os.Getenv("INDEXER_PROXY"))
+	// if err != nil {
+	// 	return nil, errors.New("invalid proxy url")
+	// }
 
-	downloadClient := &http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(proxyURL),
-		},
-	}
+	// downloadClient := &http.Client{
+	// 	Transport: &http.Transport{
+	// 		Proxy: http.ProxyURL(proxyURL),
+	// 	},
+	// }
 
 	for i := 0; i < in.Concurrency; i++ {
 		eg.Go(func() error {
@@ -99,7 +98,7 @@ func Main(in client.Request) (*client.Response, error) {
 					}
 
 					logger.Trace("initializing download")
-					resp, err := downloadClient.Do(req)
+					resp, err := http.DefaultClient.Do(req)
 					if err != nil {
 						cancel()
 						logger.WithError(err).Error("failed to get asset, skipping")
