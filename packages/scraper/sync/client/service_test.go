@@ -20,7 +20,7 @@ func TestClient(t *testing.T) {
 
 	c := NewClient()
 
-	rng, err := ranges.NewRange(101_000, 101_001)
+	rng, err := ranges.NewRange(100_000, 101_000)
 	require.NoError(t, err)
 
 	resp, err := c.Sync(context.TODO(), Request{
