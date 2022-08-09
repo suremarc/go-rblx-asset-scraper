@@ -163,7 +163,16 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 
 	client := assetdelivery.NewClient(resty.New().
 		SetRetryCount(3).
-		SetProxy(proxy))
+		SetProxy(proxy).
+		SetHeaders(map[string]string{
+			"Accept-Encoding":           "gzip, deflate, br",
+			"Pragma":                    "No-Cache",
+			"Accept-Language":           "en-US,en;q=0.8",
+			"Upgrade-Insecure-Requests": "1",
+			"User-Agent":                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+			"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp, image/apng,*/*;q=0.8",
+			"Cache-Control":             "No-Cache",
+		}))
 	limiter := rate.NewLimiter(rate.Every(time.Second/4), 1)
 
 	var wg sync.WaitGroup
@@ -191,7 +200,7 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 			if err != nil {
 				var rErr assetdelivery.ErrorsResponse
 				if errors.As(err, &rErr) {
-					if rErr.StatusCode == http.StatusUnauthorized {
+					if rErr.StatusCode == http.StatusForbidden {
 						return err
 					} else if rErr.StatusCode == http.StatusTooManyRequests {
 						if tooManyRequestsCount.Inc() > count.Load()/3 {

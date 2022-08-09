@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -36,7 +37,7 @@ func main() {
 	eg, eCtx := errgroup.WithContext(context.Background())
 	var mu sync.Mutex
 
-	limiter := rate.NewLimiter(rate.Every(time.Minute/360), 1)
+	limiter := rate.NewLimiter(rate.Every(time.Minute/360), 3)
 
 	for i := 0; i < 120; i++ {
 		i := i
@@ -76,6 +77,11 @@ func main() {
 					})
 					if err != nil {
 						logger.WithError(err).Error("couldn't request sync")
+						if strings.Contains(err.Error(), "Too Many Requests") {
+							if err := limiter.WaitN(eCtx, 2); err != nil {
+								return eCtx.Err()
+							}
+						}
 						continue
 					}
 
