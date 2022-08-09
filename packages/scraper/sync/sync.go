@@ -173,7 +173,7 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 			"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp, image/apng,*/*;q=0.8",
 			"Cache-Control":             "No-Cache",
 		}))
-	limiter := rate.NewLimiter(rate.Every(time.Second/4), 1)
+	limiter := rate.NewLimiter(rate.Every(time.Second), 1)
 
 	var wg sync.WaitGroup
 	var count atomic.Int64
