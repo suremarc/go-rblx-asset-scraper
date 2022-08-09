@@ -15,6 +15,7 @@ import (
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/client"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
 
+	ja3transport "github.com/CUCyber/ja3transport"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
@@ -53,7 +54,7 @@ func Main(in client.Request) (*client.Response, error) {
 
 	uploader := manager.NewUploader(s3Client)
 
-	eg.Go(func() error { return indexLoop(eCtx, eg, in.Ranges, items) })
+	eg.Go(func() error { return indexLoop(eCtx, eg, in.Ranges, items, time.Second/4) })
 	if in.Concurrency == 0 {
 		in.Concurrency = 4
 	}
@@ -157,23 +158,39 @@ func Main(in client.Request) (*client.Response, error) {
 	}, nil
 }
 
-func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription) error {
-	defer close(items)
-	proxy := os.Getenv("INDEXER_PROXY")
+func newClientWithOptions(proxy string) (*resty.Client, error) {
+	browser := ja3transport.SafariAuto
+	t, err := ja3transport.NewTransport(browser.JA3)
+	if err != nil {
+		return nil, fmt.Errorf("initialize ja3 transport: %w", err)
+	}
 
-	client := assetdelivery.NewClient(resty.New().
+	return resty.New().
 		SetRetryCount(3).
+		SetTransport(t).
 		SetProxy(proxy).
 		SetHeaders(map[string]string{
 			"Accept-Encoding":           "gzip, deflate, br",
 			"Pragma":                    "No-Cache",
 			"Accept-Language":           "en-US,en;q=0.8",
 			"Upgrade-Insecure-Requests": "1",
-			"User-Agent":                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+			"User-Agent":                browser.UserAgent,
 			"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp, image/apng,*/*;q=0.8",
 			"Cache-Control":             "No-Cache",
-		}))
-	limiter := rate.NewLimiter(rate.Every(time.Second), 1)
+		}), nil
+}
+
+func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, items chan<- assetdelivery.AssetDescription, rt time.Duration) error {
+	defer close(items)
+	proxy := os.Getenv("INDEXER_PROXY")
+
+	restyClient, err := newClientWithOptions(proxy)
+	if err != nil {
+		return err
+	}
+
+	client := assetdelivery.NewClient(restyClient)
+	limiter := rate.NewLimiter(rate.Every(rt), 1)
 
 	var wg sync.WaitGroup
 	var count atomic.Int64
