@@ -22,6 +22,6 @@ func TestJa3(t *testing.T) {
 
 	rngs := ranges.Ranges{rng}
 	eg, eCtx := errgroup.WithContext(context.TODO())
-	eg.Go(func() error { return indexLoop(eCtx, eg, rngs, items, time.Second/8) })
+	eg.Go(func() error { return indexLoop(eCtx, eg, rngs, items, time.Second/16) })
 	require.NoError(t, eg.Wait())
 }

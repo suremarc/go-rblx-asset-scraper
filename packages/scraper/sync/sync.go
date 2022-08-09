@@ -54,7 +54,7 @@ func Main(in client.Request) (*client.Response, error) {
 
 	uploader := manager.NewUploader(s3Client)
 
-	eg.Go(func() error { return indexLoop(eCtx, eg, in.Ranges, items, time.Second/4) })
+	eg.Go(func() error { return indexLoop(eCtx, eg, in.Ranges, items, time.Second) })
 	if in.Concurrency == 0 {
 		in.Concurrency = 4
 	}
@@ -64,17 +64,6 @@ func Main(in client.Request) (*client.Response, error) {
 	var numItems atomic.Int64
 	var numSuccess atomic.Int64
 	t0 := time.Now()
-
-	// proxyURL, err := url.Parse(os.Getenv("INDEXER_PROXY"))
-	// if err != nil {
-	// 	return nil, errors.New("invalid proxy url")
-	// }
-
-	// downloadClient := &http.Client{
-	// 	Transport: &http.Transport{
-	// 		Proxy: http.ProxyURL(proxyURL),
-	// 	},
-	// }
 
 	for i := 0; i < in.Concurrency; i++ {
 		eg.Go(func() error {
