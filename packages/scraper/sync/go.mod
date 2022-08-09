@@ -3,13 +3,13 @@ module github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync
 go 1.17
 
 require (
-	github.com/CUCyber/ja3transport v0.0.0-20201031204932-8a22ac8ab5d7
 	github.com/aws/aws-sdk-go-v2 v1.16.8
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.10
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.21
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.2
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/mailru/easyjson v0.7.7
+	github.com/refraction-networking/utls v0.0.0-20200820030103-33a29038e742
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/atomic v1.9.0
@@ -31,7 +31,6 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/refraction-networking/utls v0.0.0-20200820030103-33a29038e742 // indirect
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect

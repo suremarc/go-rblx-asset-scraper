@@ -6,16 +6,18 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
+	tls "github.com/refraction-networking/utls"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/assetdelivery"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/client"
 	"github.com/suremarc/go-rblx-asset-scraper/packages/scraper/sync/ranges"
 
-	ja3transport "github.com/CUCyber/ja3transport"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
@@ -148,24 +150,35 @@ func Main(in client.Request) (*client.Response, error) {
 }
 
 func newClientWithOptions(proxy string) (*resty.Client, error) {
-	browser := ja3transport.SafariAuto
-	t, err := ja3transport.NewTransport(browser.JA3)
-	if err != nil {
-		return nil, fmt.Errorf("initialize ja3 transport: %w", err)
-	}
-
 	return resty.New().
 		SetRetryCount(3).
-		SetTransport(t).
+		SetTransport(&http.Transport{
+			DialTLS: func(network, addr string) (net.Conn, error) {
+				dialConn, err := net.Dial(network, addr)
+				if err != nil {
+					return nil, err
+				}
+
+				config := tls.Config{
+					ServerName: strings.Split(addr, ":")[0],
+				}
+
+				uTLSConn := tls.UClient(dialConn, &config, tls.HelloRandomizedALPN)
+				if err := uTLSConn.Handshake(); err != nil {
+					return nil, err
+				}
+				return uTLSConn, nil
+			},
+		}).
 		SetProxy(proxy).
 		SetHeaders(map[string]string{
 			"Accept-Encoding":           "gzip, deflate, br",
 			"Pragma":                    "No-Cache",
 			"Accept-Language":           "en-US,en;q=0.8",
 			"Upgrade-Insecure-Requests": "1",
-			"User-Agent":                browser.UserAgent,
-			"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp, image/apng,*/*;q=0.8",
-			"Cache-Control":             "No-Cache",
+			// "User-Agent":                browser.UserAgent,
+			"Accept":        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp, image/apng,*/*;q=0.8",
+			"Cache-Control": "No-Cache",
 		}), nil
 }
 
@@ -183,7 +196,7 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 
 	var wg sync.WaitGroup
 	var count atomic.Int64
-	var tooManyRequestsCount atomic.Int64
+	var failedCount atomic.Int64
 
 	for {
 		rng := rngs.Pop(256)
@@ -206,11 +219,9 @@ func indexLoop(eCtx context.Context, eg *errgroup.Group, rngs ranges.Ranges, ite
 			if err != nil {
 				var rErr assetdelivery.ErrorsResponse
 				if errors.As(err, &rErr) {
-					if rErr.StatusCode == http.StatusForbidden {
-						return err
-					} else if rErr.StatusCode == http.StatusTooManyRequests {
-						if tooManyRequestsCount.Inc() > count.Load()/3 {
-							return errors.New("exceeded 30% of batch requests getting 429's")
+					if rErr.StatusCode == http.StatusForbidden || rErr.StatusCode == http.StatusTooManyRequests {
+						if failedCount.Inc() > count.Load()/3 {
+							return errors.New("exceeded 30% of batch requests getting 403/429's")
 						}
 					}
 				}

@@ -15,13 +15,13 @@ import (
 )
 
 func TestJa3(t *testing.T) {
-	logrus.SetLevel(logrus.TraceLevel)
-	items := make(chan assetdelivery.AssetDescription, 10_000)
-	rng, err := ranges.NewRange(100_000, 102_500)
+	logrus.SetLevel(logrus.DebugLevel)
+	items := make(chan assetdelivery.AssetDescription, 1_000_000)
+	rng, err := ranges.NewRange(100_000, 1_000_000)
 	require.NoError(t, err)
 
 	rngs := ranges.Ranges{rng}
 	eg, eCtx := errgroup.WithContext(context.TODO())
-	eg.Go(func() error { return indexLoop(eCtx, eg, rngs, items, time.Second/16) })
+	eg.Go(func() error { return indexLoop(eCtx, eg, rngs, items, time.Second/256) })
 	require.NoError(t, eg.Wait())
 }
