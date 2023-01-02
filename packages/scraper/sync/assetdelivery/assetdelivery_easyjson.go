@@ -198,7 +198,7 @@ func easyjsonB54af022EncodeGithubComSuremarcGoRblxAssetScraperPackagesScraperSyn
 		out.RawString(prefix[1:])
 		(in.Errors).MarshalEasyJSON(out)
 	}
-	{
+	if in.StatusCode != 0 {
 		const prefix string = ",\"status_code\":"
 		out.RawString(prefix)
 		out.Int(int(in.StatusCode))

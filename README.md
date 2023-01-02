@@ -1,52 +1,24 @@
-# Sample Function: Go "Hello World"
+# go-rblx-asset-scraper
 
 ## Introduction
 
-This repository contains a sample "Hello World" function written in Go. You can deploy it on DigitalOcean's App Platform as a Serverless Function component. Documentation is available at https://docs.digitalocean.com/products/functions.
+This repository contains a collection of scripts and deployments for scraping ROBLOX's public game assets.
 
-### Requirements
+```mermaid
+C4Context
+  title ROBLOX Asset Scraper - high level overview
+  Boundary(scraper, "scraper") {
+    System(sync, "scraper/sync", "A DigitalOcean function that syncs ROBLOX assets to Wasabi S3")
+    SystemDb(postgres, "PostgreSQL Job Log", "Stores records of completed/failed sync jobs in PostgreSQL")
+    System(orchestrator, "orchestrator", "A Docker deployment that kicks off sync jobs")
+    Rel(orchestrator, postgres, "Uses")
+  }
+  System_Ext(rblx, "ROBLOX Asset Delivery Service", "Access to ROBLOX's asset CDN for distribution of game assets")
+  SystemQueue_Ext(do, "DigitalOcean Functions", "Platform for deploying serverless applications")
+  SystemDb_Ext(s3, "Wasabi S3", "Provides S3-compatible storage over the internet")
 
-* You need a DigitalOcean account. If you don't already have one, you can sign up at [https://cloud.digitalocean.com/registrations/new](https://cloud.digitalocean.com/registrations/new).
-* To deploy from the command line, you will need the [DigitalOcean `doctl` CLI](https://github.com/digitalocean/doctl/releases).
-
-## Deploying the Function
-
-```bash
-# clone this repo
-git clone git@github.com:digitalocean/sample-functions-golang-helloworld.git
+  Rel(orchestrator, do, "dispatches to")
+  Rel(do, sync, "dispatches to")
+  Rel(sync, rblx, "fetches assets from")
+  Rel(sync, s3, "stores assets in")
 ```
-
-```
-# deploy the project, using a remote build so that compiled executable matched runtime environment
-> doctl serverless deploy sample-functions-golang-helloworld --remote-build
-Deploying 'sample-functions-golang-helloworld'
-  to namespace 'fn-...'
-  on host 'https://faas-...'
-Submitted action 'hello' for remote building and deployment in runtime go:default (id: ...)
-
-Deployed functions ('doctl sls fn get <funcName> --url' for URL):
-  - sample/hello
-```
-
-## Using the Function
-
-```bash
-doctl serverless functions invoke sample/hello
-```
-```json
-{
-  "body": "Hello stranger"
-}
-```
-```bash
-doctl serverless functions invoke sample/hello -p name:Sammy
-```
-```json
-{
-  "body": "Hello Sammy"
-}
-```
-
-### Learn More
-
-You can learn more about Functions and App Platform integration in [the official App Platform Documentation](https://www.digitalocean.com/docs/app-platform/).
