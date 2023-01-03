@@ -32,7 +32,7 @@ C4Context
 
 ## JA3 Token Spoofing
 
-It turns out web servers nowadays using something called the [JA3 token](https://github.com/salesforce/ja3) to detect probable bad actors. The JA3 token is derived from the TLS handshake, a sequence of communications at the beginning of a TLS session. The presence of certain ciphers, specs, and versions is translated into a "fingerprint" that can be commonly associated with popular browsers, as each browser has their own specific TLS configuration.
+It turns out web servers nowadays use something called the [JA3 token](https://github.com/salesforce/ja3) to detect probable bad actors. The JA3 token is derived from the TLS handshake, a sequence of communications at the beginning of a TLS session. The presence of certain ciphers, specs, and versions is translated into a "fingerprint" that can be commonly associated with popular browsers, as each browser has their own specific TLS configuration.
 
 Using [`utls`](https://github.com/refraction-networking/utls) to manipulate our TLS behavior we were able to 4x our throughput of requests... for a brief period of time. Eventually the rate limits seemed to tighten more as I kept running the project. It's hard to say what caused that, but in the end it didn't work as well as I had hoped.
 
